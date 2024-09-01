@@ -128,17 +128,7 @@ class PdfPageLayerCollectionHelper extends PdfObjectCollectionHelper {
       }
 
       if (ocProperties != null && (propertie != null)) {
-        propertie.items!.forEach((PdfName? key, IPdfPrimitive? value) {
-          final PdfReferenceHolder? layerReferenceHolder =
-              value as PdfReferenceHolder?;
-          final PdfDictionary? layerDictionary =
-              PdfCrossTable.dereference(value) as PdfDictionary?;
-          if ((layerDictionary != null && layerReferenceHolder != null) ||
-              layerDictionary!.containsKey(PdfDictionaryProperties.ocg)) {
-            _addLayer(page, layerDictionary, layerReferenceHolder, key!.name,
-                pageLayerCollection, false);
-          }
-        });
+        _parsePrepertie(page, pageLayerCollection, propertie);
       }
       if (ocProperties != null && pageLayerCollection.isNotEmpty) {
         _checkVisible(ocProperties, pageLayerCollection);
@@ -157,6 +147,28 @@ class PdfPageLayerCollectionHelper extends PdfObjectCollectionHelper {
       restoreStream.data = <int>[restoreState];
       contents.add(PdfReferenceHolder(restoreStream));
     }
+  }
+  
+  void _parsePrepertie(
+      PdfPage page, 
+      Map<PdfReferenceHolder?, PdfPageLayer> pageLayerCollection,
+      PdfDictionary propertie){
+
+    propertie.items!.forEach((PdfName? key, IPdfPrimitive? value) {
+      if(value is PdfDictionary){
+        _parsePrepertie(page, pageLayerCollection, value);
+      }else{
+        final PdfReferenceHolder? layerReferenceHolder =
+        value as PdfReferenceHolder?;
+        final PdfDictionary? layerDictionary =
+        PdfCrossTable.dereference(value) as PdfDictionary?;
+        if ((layerDictionary != null && layerReferenceHolder != null) ||
+            layerDictionary!.containsKey(PdfDictionaryProperties.ocg)) {
+          _addLayer(page, layerDictionary, layerReferenceHolder, key!.name,
+              pageLayerCollection, false);
+        }
+      }
+    });
   }
 
   List<int>? _combineContent(bool skipSave) {
