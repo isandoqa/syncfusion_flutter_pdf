@@ -11,8 +11,7 @@ dependencies:
     sdk: flutter
   intl: '>=0.18.1 <0.20.0'
   xml: ">=6.5.0 <7.0.0"
-  syncfusion_flutter_core:
-    path: ../syncfusion_flutter_core
+  syncfusion_flutter_core: ^26.2.11
   crypto: ">=3.0.0 <4.0.0"
   convert: ">=3.0.0 <4.0.0"
   http: ^1.2.1
